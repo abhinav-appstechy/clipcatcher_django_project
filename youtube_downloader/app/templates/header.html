@@ -1,0 +1,89 @@
+<header class="text-gray-600 body-font">
+  <div
+    class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center"
+  >
+    <a
+      class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+        ></path>
+      </svg>
+      <span class="ml-3 text-xl">ClipCatcher</span>
+    </a>
+    <nav
+      class="md:ml-auto flex flex-wrap items-center text-base justify-center"
+    >
+      <a
+        href=""
+        class="mr-5 hover:text-gray-900 cutsom_identification {% if is_homepage %}p-3 text-white rounded-md bg-indigo-600{% endif %}"
+        data-identification="home"
+        >Home</a
+      >
+      <a
+        href="#our-team"
+        class="mr-5 hover:text-gray-900 cutsom_identification"
+        data-identification="Our Team"
+        >Our Team</a
+      >
+      <a
+        href="#contact-us"
+        class="mr-5 hover:text-gray-900 cutsom_identification"
+        data-identification="Contact Us"
+        >Contact Us</a
+      >
+    </nav>
+    {% comment %}
+    <button
+      class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
+    >
+      Button
+      <svg
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        class="w-4 h-4 ml-1"
+        viewBox="0 0 24 24"
+      >
+        <path d="M5 12h14M12 5l7 7-7 7"></path>
+      </svg>
+    </button>
+    {% endcomment %}
+  </div>
+</header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let elements = document.querySelectorAll(".cutsom_identification");
+
+    elements.forEach(function (element) {
+      element.addEventListener("click", function () {
+        let identification = this.getAttribute("data-identification");
+        elements.forEach(function (el) {
+          el.classList.remove("bg-indigo-600");
+          el.classList.remove("p-3");
+          el.classList.remove("text-white");
+          el.classList.remove("rounded-md");
+        });
+        // Add 'bg-red' class to the clicked element
+        this.classList.add("bg-indigo-600");
+        this.classList.add("p-3");
+        this.classList.add("text-white");
+        this.classList.add("rounded-md");
+        // Do whatever you want with the identification data here
+      });
+    });
+  });
+</script>

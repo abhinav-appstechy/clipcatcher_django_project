@@ -1,0 +1,260 @@
+<div class="flex flex-col text-center w-full mb-5 mt-20" id="explore">
+  <h1
+    class="text-2xl font-medium title-font mb-4 text-gray-900 tracking-widest"
+  >
+    EXPLORE
+  </h1>
+</div>
+<div class="px-5 m-auto lg:px-40">
+  <form
+    method="POST"
+    enctype="multipart/form-data"
+    onsubmit="handleSubmit(event)"
+    id="myForm"
+  >
+    {% csrf_token %}
+    <label
+      for="search"
+      class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+      >Enter youtube link</label
+    >
+    <div class="relative">
+      <div
+        class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+      >
+        <svg
+          class="w-4 h-4 text-gray-500 dark:text-gray-400"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 20 20"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+          />
+        </svg>
+      </div>
+      <input
+        type="search"
+        id="youtube_link"
+        class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Enter youtube link..."
+        name="youtube_link"
+        required
+      />
+      <button
+        type="submit"
+        id="fetch-video-btn"
+        class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        Fetch
+      </button>
+    </div>
+
+    <section class="text-gray-600 body-font hidden youtube-thumbnail-section">
+      <div
+        class="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center"
+      >
+        <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
+          <img
+            id="video-thumbnail"
+            class="object-cover object-center rounded"
+            alt="hero"
+            src="https://dummyimage.com/720x600"
+          />
+        </div>
+        <div
+          class="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center"
+        >
+          <h1
+            id="video-title"
+            class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900"
+          >
+            Before they sold out
+          </h1>
+          <p id="video-desc" class="mb-8 leading-relaxed">
+            Copper mug try-hard pitchfork pour-over freegan heirloom neutra air
+            plant cold-pressed tacos poke beard tote bag. Heirloom echo park
+            mlkshk tote bag selvage hot chicken authentic tumeric truffaut
+            hexagon try-hard chambray.
+          </p>
+          <div class="flex justify-center gap-4">
+            <button
+              class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+              onclick="handleDownloadVideo(event)"
+              id="download-btn"
+              videolink=""
+            >
+              Download
+            </button>
+
+            <form id="myForm1" class="max-w-sm mx-auto">
+              <select
+                id="video-resolution-option"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option selected>Choose video resolution</option>
+                <option value="360p">360p</option>
+                <option value="480p">480p</option>
+                <option value="720p">720p</option>
+              </select>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </form>
+</div>
+
+<!-- Include SweetAlert JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.0.18/sweetalert2.min.js"></script>
+
+<script>
+  function getCsrfToken() {
+    const cookieValue = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("csrftoken="))
+      .split("=")[1];
+    return cookieValue;
+  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let resolution_selected = document.getElementById(
+      "video-resolution-option"
+    );
+    resolution_selected.value = "Choose video resolution";
+    let fetch_video_btn = document.getElementById("fetch-video-btn");
+    let ele = document.getElementsByClassName("youtube-thumbnail-section")[0];
+    ele.classList.add("hidden");
+    fetch_video_btn.innerText = "Fetching..";
+    fetch_video_btn.disabled = true;
+    const csrfToken = getCsrfToken();
+    let formdata = new FormData(document.getElementById("myForm"));
+
+    fetch("fetch-video-thumbnail/", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+      },
+      body: formdata,
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Dhghghgh-", data);
+        if (data.status == 200) {
+          ele.classList.remove("hidden");
+          let imgEle = document.getElementById("video-thumbnail");
+          let title = document.getElementById("video-title");
+          let desc = document.getElementById("video-desc");
+          let download_btn = document.getElementById("download-btn");
+          download_btn.setAttribute("videolink", data.video_url);
+          desc.innerText = data.video_description;
+          imgEle.src = data.url;
+          title.innerText = data.title;
+
+          fetch_video_btn.innerText = "Fetch";
+          fetch_video_btn.disabled = false;
+        } else {
+          Swal.fire({
+            title: "",
+            text: "Video link is invalid!",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+          fetch_video_btn.innerText = "Fetch";
+          fetch_video_btn.disabled = false;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleDownloadVideo = (e) => {
+    e.preventDefault();
+    let resolution_selected = document.getElementById(
+      "video-resolution-option"
+    );
+    let resolution = resolution_selected.value;
+    if (["360p", "480p", "720p"].includes(resolution)) {
+      let download_btn = document.getElementById("download-btn");
+      let video_link = download_btn.getAttribute("videolink");
+      download_btn.innerText = "Downloading..";
+      download_btn.disabled = true;
+      const csrfToken = getCsrfToken();
+
+      fetch("video-download/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({
+          video_link: video_link,
+          video_resolution: resolution,
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if (data.status == 200) {
+            download_btn.innerText = "Download";
+            download_btn.disabled = false;
+
+            // Decode base64 string to bytes
+            const byteCharacters = atob(data.video_content);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+
+            // Create Blob from bytes
+            const blob = new Blob([byteArray], { type: "video/mp4" });
+
+            // Create download link
+            const downloadLink = document.createElement("a");
+            downloadLink.href = window.URL.createObjectURL(blob);
+            downloadLink.download = "video.mp4";
+
+            // Trigger download
+            downloadLink.click();
+
+            Swal.fire({
+              title: "",
+              text: "Successfully downloaded!",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          } else {
+            Swal.fire({
+              title: "",
+              text: "An error occurred while downloading!",
+              icon: "error",
+              confirmButtonText: "OK",
+            });
+            download_btn.innerText = "Download";
+            download_btn.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      Swal.fire({
+        title: "",
+        text: "Please select video resolution",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+</script>
