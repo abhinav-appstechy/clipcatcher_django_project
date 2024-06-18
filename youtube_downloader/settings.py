@@ -26,12 +26,13 @@ SECRET_KEY = 'django-insecure-%dt0ps^_a_&7*^w7l_x#e+2a5=*gyzxwcdi1qo)kn7&64!29^&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["1d34-2405-201-5015-f80e-e1c0-639e-2d5-8e7e.ngrok-free.app", '127.0.0.1']
+ALLOWED_HOSTS = [".vercel.app"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -120,8 +122,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# This is the directory where `collectstatic` will collect static files for production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Additional locations of static files
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 # Default primary key field type
@@ -129,15 +135,15 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "https://1d34-2405-201-5015-f80e-e1c0-639e-2d5-8e7e.ngrok-free.app",
-    # Add other allowed origins if needed
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://1d34-2405-201-5015-f80e-e1c0-639e-2d5-8e7e.ngrok-free.app",
+#     # Add other allowed origins if needed
+# ]
 
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://1d34-2405-201-5015-f80e-e1c0-639e-2d5-8e7e.ngrok-free.app",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://1d34-2405-201-5015-f80e-e1c0-639e-2d5-8e7e.ngrok-free.app",
+# ]
 
 
 
